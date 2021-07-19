@@ -1,10 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Note from "./components/Note";
+import axios from "axios";
 
-const App = (props) => {
-  const [notes, setNotes] = useState(props.notes);
+// axios.get("http://localhost:3001/notes").then((response) => {
+//   const notes = response.data;
+//   console.log(notes);
+// });
+
+const App = () => {
+  const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("a new note...");
   const [showAll, setShowAll] = useState(true);
+
+  //  fetch data from json server
+  useEffect(() => {
+    console.log("effect");
+    axios.get("http://localhost:3001/notes").then((response) => {
+      console.log("promise fulfilled");
+      setNotes(response.data);
+    });
+  }, []);
+  console.log("render", notes.length, "notes");
 
   // add new note
   // id is made base by adding the next sequence of notes. This work if the notes not deleted
@@ -24,7 +40,6 @@ const App = (props) => {
 
   // handle controlled input element  event.target.value = input value of that element
   const handleNoteChange = (event) => {
-    console.log(event.target.value);
     setNewNote(event.target.value);
   };
 
@@ -34,8 +49,6 @@ const App = (props) => {
   //   : notes.filter((note) => note.important === true);
   // The comparison operator is in fact redundant, since the value of note.important is either true or false which means that we can simply write:
   // notes.filter(note => note.important)
-
-  // const notesToShow = notes.filter((note) => note.important);
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
   return (
@@ -45,6 +58,7 @@ const App = (props) => {
         show{showAll ? "important" : "all"}
       </button>
       <ul>
+        {}
         {notesToShow.map((note) => (
           <Note key={note.id} note={note} />
         ))}
